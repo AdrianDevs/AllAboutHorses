@@ -7,10 +7,12 @@ interface Props {
 }
 
 export const HorseView: React.FC<Props> = (props): JSX.Element => {
+  const horse = props.horse as Horse;
+
   return (
     <div>
       <Typography variant="h6" gutterBottom>
-        {props.horse.name}
+        {horse.name}
       </Typography>
     </div>
   );

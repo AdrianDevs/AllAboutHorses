@@ -2,10 +2,12 @@ import React from 'react'; // so that we can use JSX syntax
 import { render, cleanup, waitForElement } from '@testing-library/react'; // testing helpers
 import 'jest-dom/extend-expect'; // to extend Jest's expect with DOM assertions
 import nock from 'nock'; // to mock github API
-import App from '../../../ui/App'; // the app that we are going to test
+import App from 'ui/App'; // the app that we are going to test
 import { ENDPOINTS } from 'domain/configuration';
 import { localisedStrings } from 'lib/localisation';
 import { Horse } from 'domain/horses/types';
+import configureStore from 'store/configureStore';
+import { Provider } from 'react-redux';
 
 const HORSE_LIST: Horse[] = [
   {
@@ -44,6 +46,8 @@ const HORSE_LIST: Horse[] = [
 
 const endpoint = String(process.env.REACT_APP_API_ENDPOINT || 'Underfined');
 
+const mockStore = configureStore();
+
 describe('Domain/Horses', () => {
   beforeAll(() => {
     nock.disableNetConnect();
@@ -69,9 +73,13 @@ describe('Domain/Horses', () => {
     cleanup();
   });
 
-  describe('when there is a list of horses', () => {
-    const { getByText } = render(<App />);
+  const { getByText } = render(
+    <Provider store={mockStore}>
+      <App />
+    </Provider>
+  );
 
+  describe('when there is a list of horses', () => {
     it('should show the horse list page title', async () => {
       getByText(localisedStrings.horseListTitle);
     });
